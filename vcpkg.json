@@ -1,0 +1,10 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg/master/scripts/vcpkg.schema.json",
+  "name": "shipsim",
+  "version": "2.0.0",
+  "description": "Ship seakeeping and maneuvering simulation.",
+  "dependencies": [
+    "catch2"
+  ],
+  "builtin-baseline": "2475cc332a47b3a63bb3de58293bdab7726613ca"
+}

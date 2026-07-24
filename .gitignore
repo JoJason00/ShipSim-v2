@@ -1,0 +1,34 @@
+# Everything CMake/Ninja generates lands under build/
+build/
+out/
+cmake-build-*/
+vcpkg_installed/
+
+# Editor / tooling caches
+.vs/
+.cache/
+*.user
+
+# Profiling traces
+*.etl
+*.diagsession
+*.json.gz
+
+# ==========================================================
+# 算例目录:默认全忽略,白名单放行【输入】。
+# 结果 CSV / 图 / 核缓存都是产物,由代码重新生成,不入库。
+# 回归基线是例外 —— 它在 tests/regression/ 下,不受这里影响。
+# ==========================================================
+cases/**
+!cases/**/
+!cases/**/*.json
+!cases/**/*.toml
+!cases/**/*.element
+!cases/**/DriftForce/*.txt
+!cases/**/DriftForce_fullship/*.txt
+!cases/**/added_mass_damping.csv
+!cases/**/added.txt
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,17 @@
+# Single source of truth for clang-tidy checks.
+# Read automatically by both clangd (in-editor) and the clang-tidy CLI (CI).
+Checks: >
+  bugprone-*,
+  performance-*,
+  modernize-*,
+  readability-*,
+  -modernize-use-trailing-return-type,
+  -readability-magic-numbers,
+  -readability-identifier-length
+
+WarningsAsErrors: ''
+
+# Only lint our own headers, not third-party / vcpkg includes.
+HeaderFilterRegex: '.*/(src|tests)/.*'
+
+FormatStyle: file

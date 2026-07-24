@@ -1,0 +1,7 @@
+# clangd-specific tweaks. The tidy check list lives in .clang-tidy,
+# which clangd reads automatically — no need to duplicate it here.
+InlayHints:
+  Enabled: false
+
+Diagnostics:
+  UnusedIncludes: Strict
