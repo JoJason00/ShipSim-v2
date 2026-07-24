@@ -8,6 +8,8 @@ vcpkg_installed/
 .vs/
 .cache/
 *.user
+# VS "Open Folder" IntelliSense config — superseded by CMakePresets.json + clangd
+CppProperties.json
 
 # Profiling traces
 *.etl
