@@ -1,0 +1,37 @@
+{
+  "ship": "wigleyI",
+  "enable_seakeeping": true,
+  "enable_maneuvering": false,
+  "waves": [
+    {
+      "type": "RegularWave",
+      "RegularWave": {
+        "H": 1.0,
+        "direction": [ 180],
+        "set": "nada",
+        "nada": [ 36.6]
+      }
+    }
+  ],
+  "seakeeping": {
+    "NEType": "halfship",
+    "NE": 210,
+    "Fn": [ 0.2],
+    "Length": 30.0,
+    "Mass": 96966.3,
+    "draft": 1.875,
+    "GM": 0.1,
+    "displacement": 94,
+    "Ixx": 98470,
+    "Iyy": 5454281.25,
+    "Izz": 5758000,
+    "cg": [ 0.0, 0.0, -1.0 ],
+    "Method": "Source",
+    "TimeCircle": 20,
+    "PreCircle": 5,
+    "GreenCircle": 5,
+    "dt": 0.05,
+    "n_modes": 2,
+    "modes": [ 2, 4 ]
+  }
+}

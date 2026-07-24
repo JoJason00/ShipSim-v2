@@ -8,6 +8,12 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
+# Sources carry Chinese comments; MSVC needs to be told they are UTF-8.
+# Carried over from the reference implementation unchanged.
+if(MSVC)
+    add_compile_options(/utf-8)
+endif()
+
 option(ENABLE_COVERAGE "Build with coverage instrumentation" OFF)
 option(ENABLE_ASAN "Build with AddressSanitizer (+UBSan on GCC/Clang)" OFF)
 
@@ -36,14 +42,17 @@ endif()
 find_package(Catch2 3 CONFIG REQUIRED)
 include(CodeCoverage)  # provides enable_coverage()
 
-# Warnings declared once, linked into every target.
+# Warnings live in an opt-in target. shipsim_core deliberately does NOT link it yet:
+# the reference build had no /W4, and turning it on across 33k legacy lines would
+# bury real problems under thousands of messages. New modules should link it.
 add_library(project_warnings INTERFACE)
 if(MSVC)
-    target_compile_options(project_warnings INTERFACE /W4 /permissive- /utf-8)
+    target_compile_options(project_warnings INTERFACE /W4 /permissive-)
 else()
     target_compile_options(project_warnings INTERFACE -Wall -Wextra -Wpedantic)
 endif()
 
-add_subdirectory(third_party)
-add_subdirectory(src)
-add_subdirectory(tests)
+add_subdirectory(src)     # shipsim_core — the ported reference code
+add_subdirectory(app)     # shipsim_cli
+add_subdirectory(test)    # legacy driver programs (core_test, test_green, ...)
+add_subdirectory(tests)   # new Catch2 suite: unit / validation / regression

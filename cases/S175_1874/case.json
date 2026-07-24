@@ -1,0 +1,625 @@
+{
+  "Ship": {
+    "Name": "S175",
+    "Geometry": {
+      "Length": 3.0337,
+      "Draft": 0.1647,
+      "Displacement": 0.1251,
+      "Breadth": 0.4403,
+      "CB": 0.57,
+      "Trim": 0.0
+    },
+    "Mass": {
+      "Mass": 128.23,
+
+      // ===== 横摇惯量 + GM：按试验类型成对切换（复现 SR108 横摇周期 Tφ）=====
+      //   规则波试验  : GM=0.0174, Ixx=3.545  -> Tφ≈2.64s (模型尺度)
+      //   不规则波试验: GM=0.0217, Ixx=3.210  -> Tφ≈2.26s (模型尺度)  ← 当前启用
+      //   原始值(参考): Ixx=1.3194808227, GM=0.0201 -> Tφ≈1.60s (横摇偏高)
+      //   切换时：同时改 Ixx 和 GM 这一对；改完重跑自由横摇衰减并重新识别横摇阻尼。
+      // --- 规则波（备用，需要时启用这一对，注释掉下面不规则那一对）---
+      //"Ixx": 3.545,
+      "Ixx":2.71,
+      //"Ixx": 1.32,
+      //"Iyy": 85.4,
+      "GM": 0.0173,
+      // --- 不规则波（当前启用）---
+      //"Ixx": 3.210,
+      //"Iyy":87.3
+      //"GM": 0.0217,
+
+      //"Iyy": 80.2327294383,
+      //"Iyy": 200,
+      "Iyy": 73.8,
+      "Izz": 85.4,
+      //"Izz": 68.33,
+      // "Izz": 80.2327294383,
+      //"CG": [ -0.0433, 0.0, -0.01733543 ],
+      "CG": [ -0.042, 0.0, -0.01 ]
+    }
+  },
+
+  // 仅跑耦合静水回转时建议 false：core_test 否则会先跑整段 LinearCumminsTDGF 耐波再进耦合；Seakeeping 块仍供耦合快回路读取。
+  // ↓↓↓ 自由横摇衰减模式：seakeeping=true + coupling=false + FreeRollDecay.enabled=true。
+  //     跑耦合时改回：enable_seakeeping=false, enable_coupling=true, FreeRollDecay.enabled=false。
+  "enable_seakeeping": true,
+  "enable_maneuvering": false,
+  "enable_coupling": false,
+
+  "Seakeeping": {
+    // 文献式规则波回转：迎浪 chi=180°，A/L=0.005；多个 nada/L 展开为多条 RegularWave，耦合按 wave 下标 iWave 逐条选用。
+    "waves_seakeeping": [
+      {
+        //"type": "RegularWave",
+        //"output_history": true,
+        //"RegularWave": {
+        //  //"H": 0.0151685,
+        //  //"H": 0.030337,
+
+        //  //"H": 0.01850557,
+        //  //"H": 0.02244938,
+        //  //"H": 0.08,
+
+        //  //"H": 0.0,
+
+        //  //Yu liwei
+        //  "H": 0.015,
+
+        //  "direction": [ 90 ],
+        //  //"direction": [ 180,90 ],
+        //  "set": "nada/L",
+        //  "L": 3.0337,
+        //  //"nada/L": [ 0.5, 0.7, 1.0, 1.2 ]
+
+        //  //"nada/L": [ 1.354 ]
+        //  "nada/L": [  1.0 ]
+        //  //"nada/L": [ 0.3, 0.6, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.8, 2.1, 2.4, 2.7, 3.0 ]
+
+        //  //"nada/L": [ 0.3,0.4,0.5, 0.6, 0.7,0.8,0.9, 1.0,1.05,1.1,1.15, 1.2, 1.25,1.3,
+        //  //               1.35, 1.4, 1.45,1.5,1.6,1.7, 1.8,1.9,2.0, 2.1,2.2,2.3, 2.4, 2.5,2.6,2.7, 2.8,2.9,3.0 ]
+        //}
+
+
+        //"type": "RegularWave",
+        //"RegularWave": {
+        //  "H": 0.01,
+        //  "direction": [ 180.0 ],
+        //  "set": "nada/L",
+        //  "L": 3.0337,
+        //  //"nada/L": [ 1.0 ]
+        //  "nada/L": [
+        //    6.4418,
+        //    4.1311,
+        //    3.0996,
+        //    2.5931,
+        //    2.0584,
+        //    1.7921,
+        //    1.5317,
+        //    1.2797,
+        //    1.0101,
+        //    0.7561,
+        //    0.6104,
+        //    0.5030,
+        //    0.4057,
+        //    0.3019,
+        //    0.2525
+        //  ]
+        //}
+
+
+        "type": "CrossWave",
+        "output_history": true,
+        "CrossWave": {
+          "start_position": [ 0.0, 0],
+          "wave1": {
+            "type": "RegularWave",
+            "RegularWave": {
+              "H": 0.021236,
+              "direction": [ 180 ],
+              "set": "nada/L",
+              "L": 3.0337,
+              "nada/L": [ 1.4 ],
+              "phase0":0
+            }
+          },
+          "wave2": {
+            "type": "RegularWave",
+            "RegularWave": {
+              "H": 0.021236,
+              "direction": [ 90.0 ],
+              "set": "nada/L",
+              "L": 3.0337,
+              "nada/L": [ 0.7 ],
+              "phase0": 0.0
+            }
+          }
+        }
+
+
+
+        //"type": "CrossWave",
+        //"output_history": true,
+        //"CrossWave": {
+        //  //"wave1": {
+        //  //  "type": "IrregularWave",
+        //  //  "IrregularWave": {
+        //  //    "direction": 180,
+        //  //    "SpectrumType": "OH",
+        //  //    "ohMode": 1,
+        //  //    "Hs1": 0.05,
+        //  //    "Hs2": 0.03,
+        //  //    "wm1": 3.0,
+        //  //    "wm2": 6.0,
+        //  //    "lam1": 3.0,
+        //  //    "lam2": 1.5,
+        //  //    "omegaLo": 1.5,
+        //  //    "omegaHi": 12,
+        //  //    "nComponents": 80,
+        //  //    "seed": 1
+        //  //  }
+        //  //},
+        //  //"wave2": {
+        //  //  "type": "IrregularWave",
+        //  //  "IrregularWave": {
+        //  //    "direction": 90,
+        //  //    "SpectrumType": "OH",
+        //  //    "ohMode": 2,
+        //  //    "Hs1": 0.05,
+        //  //    "Hs2": 0.03,
+        //  //    "wm1": 3.0,
+        //  //    "wm2": 6.0,
+        //  //    "lam1": 3.0,
+        //  //    "lam2": 1.5,
+        //  //    "omegaLo": 1.5,
+        //  //    "omegaHi": 12,
+        //  //    "nComponents": 80,
+        //  //    "seed": 2
+        //  //  }
+        //  //}
+
+
+        //  "wave1": {
+        //    "type": "IrregularWave",
+        //    "IrregularWave": {
+        //      "direction": 180,
+        //      "SpectrumType": "OH",
+        //      "ohMode": 1,
+        //      "Hs1": 0.05,
+        //      "wm1": 3.0,
+        //      "lam1": 3.0,
+        //      "Hs2": 0,
+        //      "wm2": 0,
+        //      "lam2": 0,
+        //      "omegaLo": 1.0,
+        //      "omegaHi": 6.0,
+        //      "nComponents": 60,
+        //      "seed": 1
+        //    }
+        //  },
+        //  "wave2": {
+        //    "type": "IrregularWave",
+        //    "IrregularWave": {
+        //      "direction": 90,
+        //      "SpectrumType": "OH",
+        //      "ohMode": 2,
+        //      "Hs1": 0.05,
+        //      "wm1": 3.0,
+        //      "lam1": 3.0,
+        //      "Hs2": 0.03,
+        //      "wm2": 6.0,
+        //      "lam2": 1.5,
+        //      "omegaLo": 2.0,
+        //      "omegaHi": 10.0,
+        //      "nComponents": 60,
+        //      "seed": 2
+        //    }
+        //  }
+        //}
+
+
+        //"type": "CrossWave",
+        //"CrossWave": {
+        //  "start_position": [ 0, 0 ],
+        //  "wave1": {
+        //    "type": "IrregularWave",
+        //    "IrregularWave": {
+        //      "direction": 135,
+        //      "SpectrumType": "ITTC",
+        //      "Hs": 0.04,
+        //      "T1": 1.3,
+        //      "omegaLo": 1.5,
+        //      "omegaHi": 9.0,
+        //      "nComponents": 60,
+        //      "seed": 1
+        //    }
+        //  },
+        //  "wave2": {
+        //    "type": "IrregularWave",
+        //    "IrregularWave": {
+        //      "direction": -135,
+        //      "SpectrumType": "ITTC",
+        //      "Hs": 0.04,
+        //      "T1": 1.3,
+        //      "omegaLo": 1.5,
+        //      "omegaHi": 9.0,
+        //      "nComponents": 60,
+        //      "seed": 1
+        //    }
+        //  }
+        //}
+
+
+        // ===================================================================
+        // ITTC 不规则波回转（模型尺度 Lpp=3.0337 m, λ=57.69）
+        //   Hs/T1/omegaLo/omegaHi 为“按工况成对”的等长数组（第 i 个元素同属
+        //   第 i 个工况）；direction 与 seed 为“叉乘”数组。
+        //   本块 = 1(浪向) × 3(工况) × 5(seed) = 15 条波，自动展开逐条回转。
+        //   换算：Hs = 实船Hs / λ，  T1 = 实船T1 / √λ(=7.595)。
+        //   Case 11/12/13 实船：Hs=1.88/3.25/4.62 m，T1=5.30/6.90/9.50 s。
+        //   输出目录已含 seed 标签（ITTC-d180-Hs..-T1..-sN），多 seed 不再覆盖。
+        // ===================================================================
+        //"type": "IrregularWave",
+        //"output_history": true,
+        //  "IrregularWave": {
+        //    "SpectrumType": "ITTC",
+        //    "direction": [ 180 ],
+        //    "nComponents": 60,
+        //    "seed": [ 1, 2, 3, 4, 5 ],
+
+        //    "Hs": [ 0.03259, 0.05634, 0.08009 ],
+        //    "T1": [ 0.6978, 0.9085, 1.2508 ],
+        //    "omegaLo": [ 2.5, 2.0, 1.5 ],
+        //    "omegaHi": [ 22.0, 17.0, 13.0 ]
+        //  }
+
+        //"type": "IrregularWave",
+        //"output_history": true,
+        //  "IrregularWave": {
+        //    "SpectrumType": "ITTC",
+        //    "direction": [ 180 ],
+        //    "nComponents": 60,
+        //    "seed": [ 1, 2, 3, 4, 5 ],
+
+        //    "Hs": [  0.08 ],
+        //    "T1": [ 1.25 ],
+        //    "omegaLo": [ 1.5 ],
+        //    "omegaHi": [ 13.0 ]
+        //  }
+      }
+    ],
+
+    "Fn": [ 0.2 ],
+    //"Fn": [ 0.1412 ],
+    "DOF": 3,
+    "modes": [ 2, 3, 4 ],
+
+    "PanelSettings": {
+      "NEType": "halfship",
+      "NE": 1874
+    },
+
+    "TimeSettings": {
+      "dt": 0.02,
+      "TimeCircle": 15,
+      "PreCircle": 2.0,
+      "GreenCircle": 2.0
+    },
+
+    "Solver": {
+      //"Method": "Source",
+      "Method": "Potential",
+      "ResponseMethod": "LinearCumminsTDGF",
+      //"ResponseMethod": "seakeeping"
+
+      //"FKForceMethod": "DirectPressure",
+      "FKForceMethod": "TDGFImpulse",
+
+      "RankineImpl": "Source"
+    },
+
+    "GreenFunction": {
+      "Method": "Exact",
+      "TablePath": "tdgf_ode_table.bin",
+      "RK4Step": 0.001
+    },
+
+    "KradOverride": {
+      "enabled": true,
+      //"file": "K_change/KT_S175_source.csv"
+      "file": "K_change/KT_S175_movesource.csv"
+    },
+
+    "FKImpulseKernel": {
+      "Method": "Auto",
+      "IncludeShipName": true,
+
+      "RegionAdaptiveKernelGrid": true,
+
+      "SamplesPerWavePeriod": 20.0,
+      "DtFloorNd": 0.005,
+      "DtCapNd": 0.10,
+      "MemoryEncounterPeriods": 8.0,
+      "MemoryFloorNd": 5.0,
+      "MemoryCapNd": 30.0,
+
+      "SamplesPerWavePeriodHead": 40.0,
+      "DtCapNdHead": 0.05,
+      "MemoryEncounterPeriodsHead": 3.5,
+      "MemoryFloorNdHead": 2.0,
+      "MemoryCapNdHead": 6.0,
+
+      "SamplesPerWavePeriodFollowing": 30.0,
+      "DtCapNdFollowing": 0.10,
+      "MemoryEncounterPeriodsFollowing": 12.5,
+      "MemoryFloorNdFollowing": 6.0,
+      "MemoryCapNdFollowing": 80.0,
+
+      "MemoryEncounterPeriodsF2": 15.0,
+      "MemoryCapNdF2": 80.0,
+      "FollowingMemoryMinIncidentPeriods": 3.5,
+
+      "MaxFKImpulseRows": 2200,
+
+      "TailTolRel": 1.0e-3
+    },
+
+
+    "RollDamping": {
+      "enabled": true,
+      // 用本算例自带的 roll_decay_S175.csv（已是船模尺度，T_n≈1.60 s，与文献 Zhou&Ma 2015 S175 实验一致）做峰值消去法拟合，
+      // 耦合快回路 TDGFWindowSeakeepingSolver 构造时自动调用 RollDampingBuilder::build 反推 B44_lin/quad/cube，无需单独跑纯耐波。
+      //"mode": "FromDecayCsv",
+      "mode": "DirectCoefficients",
+      "decay": {
+        "csvPath": "roll_decay_S175.csv",
+        "polyOrder": 2,
+        "minPeakGap": 3,
+        "IeffOverride": -1.0,
+        "angleInDeg": true,
+        // 方案A：消去法拟合后再用 1-DOF ODE 正向积分精修 (B44_lin,B44_quad)，使仿真包络贴合实测。
+        // refineSkipFirstPeaks=1 丢弃首半周期释放暂态。false 回到原消去法行为。
+        "refine": true,
+        "refineSkipFirstPeaks": 1
+      },
+      // DirectCoefficients 备用：切回时把 mode 改回 "DirectCoefficients" 即可（FromDecayCsv 下本块不读）。
+      "direct": {
+        //"B44_lin": 0.2034772e1,
+        //"B44_lin": 2.0,
+        //"B44_quad": 0.0911765e0,
+
+        "B44_lin": 0.2,
+        "B44_quad":1,
+
+        "B44_cube": 0.0
+
+        //"B44_lin": 2.0,
+        //"B44_quad":30,
+        //"B44_cube": 0.0
+
+        //"B44_lin": 1.6,
+        //"B44_quad": 10,
+        //"B44_cube": 0.0
+      }
+    },
+
+    //"RollDamping": {
+    //  "enabled": false
+    //},
+
+    "FreeRollDecay": {
+      "enabled": false,
+      "phi0_deg": 15.1,
+      "phidot0_deg_s": 0.0,
+      "dt": 0.02,
+      "duration": 18.0
+    }
+  },
+
+  // S175_1262 与文献 Yasukawa 船模对照：几何参考 L_ref=3.5 m（见 src/mmg/mmg.h 模型尺度），本船 Lpp=3.0337 m，线尺度 k=Lpp/L_ref。
+  // 已按 k 缩：Lwl,B,d,Dp,HR,BR,AR,xG；弗劳德时间/转速：δ̇、n_p ∝ sqrt(L_ref/Lpp)。质量/惯量 Ship 为实测值，与纯 k³ 缩尺略有差。
+
+  "Manoeuvring": {
+    "waves_manoeuvring": [],
+
+    "MmgTimeConfig": {
+      "dt": 0.02,
+      "SeakeepingStep": 20,
+      "v_interavl": 0.2,
+      "angle_interval": 5
+    },
+
+    "hullCoeff": {
+      "Xvv": -0.0711,
+      "Xvr": 0.0573,
+      "Xrr": 0.0037,
+      "Xvvvv": 0.0,
+      "Xuu": 0.01563,
+
+      "Yv": 0.2137,
+      "Yr": 0.0446,
+      "Yvvv": 2.0080,
+      "Yvvr": 0.3942,
+      "Yvrr": 0.7461,
+      "Yrrr": 0.0326,
+
+      "Nv": 0.0710,
+      "Nr": -0.0409,
+      //"Nr": -0.028,
+      "Nvvv": -0.0275,
+      "Nvvr": -0.7811,
+      "Nvrr": -0.0287,
+      "Nrrr": -0.0422
+    },
+
+    "propellerCoeff": {
+      "tp": 0.175,
+      // 文献 L_ref=3.5 m 自航 n_p=10.05 rps；弗劳德转速缩尺 n∝1/sqrt(L)：n = 10.05*sqrt(L_ref/Lpp)。
+      //"np": 10.794779314142813,
+      "np": 9.9,
+
+      "Dp": 0.1128,
+
+      "k0": 0.2932,
+      "k1": -0.1971,
+      "k2": -0.0481,
+
+      "C1": -8.0,
+      "C2": 0.0,
+      "xp": 0.0,
+
+      "wP0": 0.1684
+    },
+
+    "rudderCoeff": {
+      "omigaR": 0.0,
+      "HR": 0.1335,
+      "kappa": 0.631,
+      "lR": -1.0,
+      "AR": 0.0098,
+      "f_alpha": 2.747,
+      "tR": 0.29,
+      "aH": 0.237,
+      "xR": -1.51685,
+      "xH": -1.456176,
+      "epsilonP": 0.921,
+
+      "kP": 0.631,
+      "gammaR_plus": 0.193,
+      "gammaR_minus": 0.088
+    },
+
+    "addedCoeff": {
+      // 由 mx_nd,my_nd,Jz_nd 与 0.5*rho*Lpp^2*d、0.5*rho*Lpp^4*d 换算（船模尺度 SI），与 CoupledMmg3DOF 一致。
+      "mx": 3.418105070262466,
+      "my": 100.91178377888505,
+      "Jz": 55.051444674303895
+    },
+
+    "Fn": [ 0.15 ],
+    //"Fn": [ 0.1284 ],
+
+    "TurningCfg": {
+      "TurningCaseCicle": 2.7,
+      "rudder_angle": 35.0,
+      // 文献船模 L_ref=3.5 m 舵速 12 °/s；本算例 Lpp=3.0337 m 弗劳德时间缩尺：δ̇ = 12*sqrt(L_ref/Lpp)（角速率 ∝ 1/sqrt(L)）。
+      //"rudder_rate": 12.889288733304852
+      "rudder_rate": 13,
+
+      //"t_star"
+      "stop_by": "circle",
+      //"stop_by": "t_star",
+      "t_star_max": 35.0
+
+      //"rudder_rate": 26.5828
+    },
+
+    "ZigzagCfg": {
+      "ZigzagCaseCicle": 5.0,
+      "rudder_angle": 10.0,
+      "rudder_rate": 12.889288733304852
+    },
+
+    "use_hullCoeff_defined": true,
+    "use_propellerCoeff_defined": true,
+    "use_rudderCoeff_defined": true,
+    "addedCoeff_defined": true,
+    "turn_on_turningcase": true,
+    "turn_on_zigzagcase": false,
+
+    "lowFreqManeuverModel": "mmg_default",
+
+    // Coupled slow 3-DOF MMG (tank model): same length/mass scale as Ship above. Nondim hull/prop from hullCoeff/propellerCoeff.
+    // Set root "enable_coupling": true to run coupling; pure seakeeping block above is unchanged.
+    "CoupledMmg3DOF": {
+      "enabled": true,
+      "reuseManoeuvringNondimHullProp": true,
+      "rho": 1025.0,
+      "g": 9.81,
+      "Lpp": 3.0337,
+      "Lwl": 3.089173371428571,
+      "B": 0.4403,
+      "d": 0.1647,
+      "Cb": 0.5774,
+      "massKg": 128.23,
+      // 与 S175_848 实船 xG=-2.55 m 按 Lpp 缩尺到船模。
+      "xG_m": -0.04420534285714285,
+      "kzz_nd": 0.269,
+      "Dp": 0.1128,
+      "HR": 0.1335,
+      "BR": 0.0730777714285714,
+      "AR": 0.0098,
+      //"xP_nd": 0.0,
+      "xP_nd": -0.45,
+      "xR_nd": -0.5,
+      "xH_nd": -0.48,
+      "lR_nd": -1.0,
+      "epsilon": 0.921,
+      "kappa": 0.631,
+      "tR": 0.29,
+      "aH": 0.237,
+      "gammaR_plus": 0.193,
+      "gammaR_minus": 0.088,
+
+      // 与 TurningCfg 一致：由 L_ref=3.5 m、12 °/s 缩至本船模 Lpp（见上式）。
+      "deltaRateDegPerS": 12.889288733304852,
+      "maxDeltaDeg": 35.0,
+      "Fn": 0.15,
+      "npRps": 10.794779314142813,
+      "mx_nd": 0.0044,
+      "my_nd": 0.1299,
+      "Jz_nd": 0.0077,
+
+      // ---- 可选 4-DOF（加横摇）。maneuverDOF=3 即原 3-DOF（默认行为不变）。----
+      //   横摇不反馈给 u/v/r，开 4-DOF 后操纵轨迹与 3-DOF 完全一致，只多出慢横摇（平均横倾）。
+      //   总横摇 = 这里的慢横倾(phi_roll) + 耐波快解算器的波浪横摇，做线性叠加。
+      //   下列比值(zH/d, zR/d, zG/d, N 系数)是无量纲的，直接适用于 3.0337m 船模；
+      //   尺寸量(Ixx, GM, m, d)用本船自身值(取自 Ship.Mass)。
+      //   rollJxxAdd≈耐波 A∞(roll)=0.326，使慢/快横摇固有周期一致(≈1.6s)。
+      //   rollB44_lin/quad 沿用耐波标定值(1.0/8.0)。
+      //   zG_over_d=0(重心在水线)→无舵致内倾、无惯性耦合，仅离心外倾；要内倾把它设非零。
+      "maneuverDOF": 4,
+      "rollJxxAdd": 0.326,
+      "rollB44_lin": 1.5,
+      "rollB44_quad": 12.0,
+      "zH_over_d": 0.5,
+      "zR_over_d": 0.7,
+      "zG_over_d": 0.0
+    }
+  },
+
+  "Coupling": {
+    "Time": {
+      "dtSlow": 0.25,
+      "dtFast": 0.02,
+      "totalTime": 3000.0,
+      "predictorCorrectorIters": 1,
+      // 横摇固有周期 T_n≈1.6 s（ω_n≈3.9 rad/s）；软启动取 ≈2.5·T_n，避免 t=0 阶跃激发近无阻尼横摇暂态。0=关闭。
+      //"waveRampTimeS": 4.0
+      "waveRampTimeS": 0.0
+    },
+    "Refresh": {
+      "betaTolDeg": 5.0,
+      "omegaTolRatio": 0.03,
+      "speedTolRatio": 0.03,
+      "enableExcitationInterpolation": true,
+      "enableRadiationInterpolation": true,
+      "adaptiveRefresh": true,
+      "adaptiveRefreshFactor": 0.5
+    },
+    "Output": {
+      "saveSlowStates": true,
+      "saveWindowLoads": true,
+      "saveFastSummary": true,
+      // 文献对照船模 3.5 m；仿真 Lpp=Ship.Geometry.Length，CSV 中 u_mdl 等按 k=sqrt(3.5/L_sim) 写入
+      "referenceModelLppM": 3.5
+    },
+    "physics": {
+      "enableFastSeakeeping": true,
+      "enableSecondOrderLoads": true,
+      //"waveForceMode": "directFK",
+      //"waveForceMode": "fkImpulse",
+      "waveForceMode": "directFKdf",
+      "enableRadiation": true
+    }
+  }
+}
