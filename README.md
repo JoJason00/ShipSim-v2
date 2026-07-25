@@ -36,24 +36,34 @@
 
 CMake ≥ 3.21、Ninja,以及指向 vcpkg 检出目录的 `VCPKG_ROOT`。
 
-**Windows:** 从 *x64 Native Tools Command Prompt* 或 *Developer PowerShell for VS*
-运行,否则 Ninja 找不到 `cl.exe` 会静默选中 MinGW —— 构建会直接报错拦住。
-
 ## 构建
 
-```bash
-cmake --preset debug
-cmake --build --preset debug
-ctest --preset debug
+任意终端下,`build.bat` 会自动找到并初始化 MSVC 环境:
+
+```bat
+build.bat            配置 + 编译 + 测试(debug,默认)
+build.bat release    优化构建
+build.bat asan       编译 + 测试,查内存错误
 ```
 
-| Preset | 构建类型 | 用途 |
-|---|---|---|
-| `debug` | Debug | 日常开发、测试 |
-| `release` | Release | 优化构建 |
-| `profile` | RelWithDebInfo | 性能分析(`scripts/profile.ps1`) |
-| `coverage` | Debug + clang-cl | 覆盖率(`scripts/coverage.ps1`) |
-| `asan` | Debug + AddressSanitizer | 抓内存错误 |
+可执行文件在 `build/<preset>/bin/`。
+
+在 *Developer PowerShell for VS* 里也可直接用 preset(等价):
+
+```bash
+cmake --preset debug && cmake --build --preset debug && ctest --preset debug
+```
+
+| Preset | 用途 |
+|---|---|
+| `debug` | 日常开发、测试 |
+| `release` | 优化构建 |
+| `profile` | 性能分析(`scripts/profile.ps1`) |
+| `coverage` | 覆盖率(`scripts/coverage.ps1`) |
+| `asan` | AddressSanitizer,抓内存错误 |
+
+> ASan 版慢 2~3 倍,只在排查内存 bug 时用。查算例内存问题:
+> `build/asan/bin/shipsim_cli.exe <case>`。日常用 `debug` / `release`。
 
 ## 测试分三层
 
@@ -69,11 +79,13 @@ tests/regression/   对标冻结基线,严容差 1e-10
 ## 目录
 
 ```
-src/core/         数学 / 类型 / 常量
-third_party/      Eigen、jsoncpp(Step 5 前保持 vendored)
-tests/            unit / validation / regression
-cmake/            enable_coverage() 等辅助
-scripts/          coverage.ps1  profile.ps1
+src/               参考实现代码(Phase 3 拆分为各模块)
+app/               shipsim_cli
+test/              旧驱动程序(core_test 等,非单元测试)
+tests/             新测试:unit / validation / regression
+eigen-5.0.0/ json/ jsoncpp.cpp   vendored 依赖(Step 5 前保留)
+cases/             算例输入(结果产物由 .gitignore 排除)
+cmake/ scripts/    覆盖率、profiling 辅助
 ```
 
 模块划分与依赖规则见 [architecture.md](../ShipSim-Refactor/architecture.md)。
